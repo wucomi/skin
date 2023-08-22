@@ -1,0 +1,84 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'groovy'
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+}
+
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+    //引入android插件的api。注意这里是插件的版本号，和gradle不是一个版本号
+    //在File > Project Structure > Project > Gradle Plugin Version查看
+    implementation "com.android.tools.build:gradle:7.3.1"
+}
+
+//java-gradle-plugin配置
+//配置插件
+gradlePlugin {
+    plugins {
+        SkinPlugin {
+            id = 'com.github.wucomi.skin' //插件id
+            implementationClass = 'com.skin.plugin.SkinPlugin' //插件实现类
+        }
+    }
+}
+
+// maven-publish配置
+group = LIB_GROUP
+version = LIB_VERSION
+description = '皮肤打包插件'
+tasks.register('sourcesJar', Jar) {
+    from sourceSets.main.java.srcDirs
+    archiveClassifier.set('sources')
+}
+afterEvaluate {
+    publishing {
+        publications {
+            //定义出版物
+            skin(MavenPublication) {
+                artifactId 'plugin'
+                from components.java
+                artifact sourcesJar
+            }
+        }
+        repositories {
+            //本地仓库
+            maven {
+                //默认本地maven仓库路径是$USER_HOME/.m2/repository
+                url uri('../.m2/repository')
+            }
+            //远程仓库
+            maven {
+                url 'https://jitpack.io'
+                credentials {
+                    username project.findProperty("jitpack.username")
+                    password project.findProperty("jitpack.password")
+                }
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        groovy {
+            srcDir 'src/main/groovy'
+        }
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_11
+    }
+}

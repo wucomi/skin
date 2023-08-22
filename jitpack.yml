@@ -1,0 +1,24 @@
+# 环境变量设置阶段
+env:
+  INCLUDE_APP: "false"
+## 构建前准备阶段
+#before_install:
+#  - echo "Starting before_install stage"
+## 构建前脚本阶段
+#before_script:
+#  - echo "Starting before_script stage"
+## 构建安装阶段
+#install:
+#  - echo "Starting install stage"
+## 构建脚本阶段
+#script:
+#  - echo "Starting script stage"
+## 构建后阶段
+#after_install:
+#  - echo "Starting after_install stage"
+## 构建成功阶段
+#after_success:
+#  - echo "Starting after_success stage"
+## 构建失败阶段
+#after_failure:
+#  - echo "Starting after_failure stage"

@@ -1,0 +1,73 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'maven-publish'
+}
+
+android {
+    compileSdk 34
+    namespace 'com.skin.library'
+    defaultConfig {
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName LIB_VERSION
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    // aspectj库
+    implementation 'org.aspectj:aspectjrt:1.9.9.1'
+}
+
+//maven-publish配置
+group = LIB_GROUP
+version = LIB_VERSION
+description = '动态换肤'
+tasks.register('sourcesJar', Jar) {
+    from android.sourceSets.main.java.srcDirs
+    archiveClassifier.set('sources')
+}
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                artifactId 'skin'
+                from components.release
+                artifact sourcesJar
+            }
+        }
+        repositories {
+            maven {
+                url 'https://jitpack.io'
+                credentials {
+                    username project.findProperty("jitpack.username")
+                    password project.findProperty("jitpack.password")
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,55 @@
+def skinFile = file("skins")
+
+def createPackageSkinTask(File file) {
+    if (!file.directory) {
+        return
+    }
+    if (file.name == 'res') {
+        tasks.register(file.parentFile.name) {
+            group = 'skin'
+            description = '生成皮肤包.'
+            doLast {
+                packageSkinInternal(file.parentFile)
+            }
+        }
+    } else {
+        file.listFiles().canonicalFile.forEach {
+            createPackageSkinTask(it)
+        }
+    }
+}
+
+createPackageSkinTask(skinFile)
+
+def packageSkinInternal(File skinPath) {
+    def resourcesPath = file("${skinPath}/res")
+    def manifestPath = file("${skinPath}/AndroidManifest.xml")
+    def rOutputPath = file("${skinPath}/output")
+    def apOutputPath = file("${skinPath}/output/${skinPath.name}.apk")
+    packageSkin(resourcesPath, manifestPath, rOutputPath, apOutputPath)
+    println "outputPath:${file("${skinPath}/output")}"
+}
+
+def packageSkin(File resourcesPath, File manifestPath, File rOutputPath, File apOutputPath) {
+    def sdkDir = android.sdkDirectory
+    // AAPT路径
+    def aapt = file("$sdkDir/build-tools/${android.buildToolsVersion}/aapt")
+    // android.jar路径
+    def platformJar = file("$sdkDir/platforms/${android.compileSdkVersion}/android.jar")
+    rOutputPath.mkdirs()
+    apOutputPath.createNewFile()
+
+    // 执行AAPT命令来打包资源
+    project.exec {
+        /*
+       -f：覆盖输出文件.
+       -m：生成R.java文件.
+       -J：指定R.java文件的输出目录.
+       -F：指定.ap_文件输出目录.
+       -S：指定资源文件的目录（例如res目录）.
+       -M：指定AndroidManifest.xml文件的路径.
+       -I：指定Android平台库的路径，通常是<Android_SDK>/platforms/android-<version>/android.jar.
+       */
+        commandLine aapt, 'package', '-f', '-m', '-J', rOutputPath, '-F', apOutputPath, '-S', resourcesPath, '-M', manifestPath, '-I', platformJar
+    }
+}
