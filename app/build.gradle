@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'io.github.wurensen.android-aspectjx' version '3.3.2'
     id 'com.github.wucomi.skin' version '1.0.0'
+    id 'kotlin-kapt'
 }
 // SkinPlugin
 skin {
@@ -55,4 +56,5 @@ dependencies {
 
 dependencies {
     implementation project(":skin")
+    kapt project(':compiler')
 }

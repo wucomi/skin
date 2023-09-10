@@ -21,6 +21,7 @@ import com.skin.library.resources.DefaultResources
 import com.skin.library.resources.ExternalResources
 import com.skin.library.resources.IResources
 import com.skin.library.resources.MergeResources
+import kotlin.reflect.KClass
 
 const val TAG = "SKIN"
 
@@ -59,7 +60,7 @@ object SkinManager {
      * @param app Application
      * @param adapter View类型 to 皮肤适配器
      */
-    fun init(app: Application, vararg adapter: Pair<Class<out View>, ISkinAdapter>) {
+    fun init(app: Application, vararg adapter: Pair<KClass<out View>, ISkinAdapter>) {
         mContext = app
         //获取是否开启换肤
         val packageManager = app.packageManager
@@ -116,8 +117,7 @@ object SkinManager {
                 mSkinResourcesPairs[path] = externalResources
                 mSkinResourcesPairsCache[path] = externalResources
             } catch (e: Throwable) {
-                Log.e(TAG, "loadSkin: 加载皮肤失败, path:${path}", e)
-                e.printStackTrace()
+                Log.e(TAG, "loadSkin: 加载皮肤失败, path:${path}")
             } finally {
                 Trace.endSection()
             }

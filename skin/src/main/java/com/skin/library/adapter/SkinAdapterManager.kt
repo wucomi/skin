@@ -4,16 +4,24 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.skin.library.common.SkinAttrUtils
+import kotlin.reflect.KClass
 
 object SkinAdapterManager {
-    private val mAdapters = hashMapOf<Class<out View>, ISkinAdapter>()
+    private val mAdapters = hashMapOf<KClass<out View>, ISkinAdapter>()
 
     init {
         addAdapter(
-            View::class.java to ViewSkinAdapter(),
-            TextView::class.java to TextViewSkinAdapter(),
-            ImageView::class.java to ImageViewSkinAdapter(),
+            View::class to ViewSkinAdapter(),
+            TextView::class to TextViewSkinAdapter(),
+            ImageView::class to ImageViewSkinAdapter(),
         )
+        try {
+            // 绑定自定义Adapter
+            Class.forName("com.skin.library.adapter.CustomAdapterBinding")
+                .getConstructor(SkinAdapterManager::class.java)
+                .newInstance(this)
+        } catch (_: Throwable) {
+        }
     }
 
     fun getAdapters(view: View): List<ISkinAdapter> {
@@ -24,11 +32,11 @@ object SkinAdapterManager {
         return skinAdapters
     }
 
-    fun addAdapter(vararg adapters: Pair<Class<out View>, ISkinAdapter>) {
+    fun addAdapter(vararg adapters: Pair<KClass<out View>, ISkinAdapter>) {
         mAdapters.putAll(adapters)
     }
 
-    fun removeAdapter(type: Class<out View>) {
+    fun removeAdapter(type: KClass<out View>) {
         mAdapters.remove(type)
     }
 }

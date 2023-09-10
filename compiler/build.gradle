@@ -1,0 +1,54 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'kotlin-kapt'
+    id 'maven-publish'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+dependencies {
+    implementation project(path: ':annotations')
+    implementation("com.squareup:kotlinpoet:1.12.0")
+    implementation 'com.google.auto.service:auto-service-annotations:1.0.1'
+    kapt 'com.google.auto.service:auto-service:1.0.1'
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_11
+    }
+}
+
+// maven-publish配置
+group = LIB_GROUP
+version = LIB_VERSION
+tasks.register('sourcesJar', Jar) {
+    from sourceSets.main.java.srcDirs
+    archiveClassifier.set('sources')
+}
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                artifactId 'compiler'
+                from components.java
+                artifact sourcesJar
+            }
+        }
+        repositories {
+            maven {
+                url 'https://jitpack.io'
+                credentials {
+                    username project.findProperty("jitpack.username")
+                    password project.findProperty("jitpack.password")
+                }
+            }
+        }
+    }
+}
