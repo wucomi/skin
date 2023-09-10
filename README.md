@@ -32,10 +32,12 @@ dependencyResolutionManagement {
 ```groovy
 plugins {
     id 'io.github.wurensen.android-aspectjx' version '3.3.2'
+    id 'kotlin-kapt'
 }
 
 dependencies {
-    implementation 'com.github.wucomi.skin:skin:1.0.0'
+    implementation 'com.github.wucomi.skin:skin:1.1.0'
+    kapt 'com.github.wucomi.skin:complier:1.1.0'
 }
 ```
 
@@ -52,14 +54,18 @@ dependencies {
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
-        SkinManager.init(this, View::class.java to ViewSkinAdapter())
+        SkinManager.init(this)
     }
 }
 ```
 
+##### 自定义Adapter
+
+如果项目中有自定义的组件需要支持换肤，可以自定义adapter来实现自动换肤，以下以 `LinearLayout` 为例进行说明：
+
 ```kotlin
-//这里以View的Adapter为例
-class ViewSkinAdapter : ISkinAdapter {
+@Adapter("android.widget.LinearLayout")
+class LinearLayoutAdapter : ISkinAdapter {
     override fun applySkin(view: View, resources: IResources, attrs: HashMap<String, Int>) {
         setBackground(view, resources, attrs[SkinAttrs.background])
     }
@@ -172,9 +178,11 @@ binding.removeMain.setOnClickListener {
 
 #### 皮肤打包插件
 
-下面隆重介绍一下皮肤打包插件的使用， 使用插件会自动为我们生成皮肤包路径下的打包命令，执行命令会生成对应的皮肤包。
+🎉🎉🎉 重磅推荐！🎉🎉🎉 让我来隆重介绍一下这款超给力的自动打包插件。它会帮我们生成体积超小的皮肤包，让打包操作变得轻松又便捷！🚀🚀🚀。
 
 ![_20250111185420.png](https://s2.loli.net/2025/01/11/ufoBq7zjWJtw5cF.jpg)
+
+使用插件会自动为我们生成皮肤包路径下的打包命令，执行命令会生成对应的皮肤包。
 
 项目settings.gradle中添加
 
