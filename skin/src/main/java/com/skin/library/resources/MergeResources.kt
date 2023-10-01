@@ -9,7 +9,7 @@ import android.graphics.drawable.Drawable
 class MergeResources(
     private val resourcesPairs: LinkedHashMap<String, IResources>,
     private val defaultResources: IResources
-) : IResources {
+) : PResources() {
     override fun getColor(resId: Int): Int {
         var color = 0
         resourcesPairs.forEach {

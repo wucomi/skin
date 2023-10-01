@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import androidx.annotation.AnyRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.LayoutInflaterCompat
 import com.skin.library.adapter.ISkinAdapter
@@ -25,13 +26,17 @@ import kotlin.reflect.KClass
 
 const val TAG = "SKIN"
 
+fun <T> r(@AnyRes resId: Int?): T? {
+    if (resId == null) {
+        return null
+    }
+    return SkinManager.resources.getResource(resId)
+}
+
 object SkinManager {
     private val mSkinLifecycleCallbacks = ActivityManager()
     private lateinit var mContext: Application
     private lateinit var mSkinConfig: SkinConfig
-
-    //资源加载管理器
-    private lateinit var resources: IResources
 
     //正在用的皮肤包的Type, path
     private var mSkinPathPairs = linkedMapOf<String, String>()
@@ -44,6 +49,10 @@ object SkinManager {
 
     //Activity是否允许换肤
     private val mActivityOpenSkin = hashMapOf<String, Boolean?>()
+
+    //资源加载管理器
+    lateinit var resources: IResources
+        private set
 
     //App是否允许换肤
     var isAppOpenSkin = false
@@ -62,6 +71,7 @@ object SkinManager {
      */
     fun init(app: Application, vararg adapter: Pair<KClass<out View>, ISkinAdapter>) {
         mContext = app
+
         //获取是否开启换肤
         val packageManager = app.packageManager
         val metaDataPackageInfo = packageManager.getPackageInfo(app.packageName, PackageManager.GET_META_DATA)
@@ -177,13 +187,6 @@ object SkinManager {
                 }
             }
         }
-    }
-
-    /**
-     * 获取资源解析器
-     */
-    fun getResources(): IResources {
-        return resources
     }
 
     /**

@@ -112,7 +112,7 @@ abstract class SkinFactory2(private val layoutInflater: LayoutInflater) : Factor
 
         // 更新皮肤
         skinAdapters.forEach {
-            it.applySkin(view, SkinManager.getResources(), attrsMap)
+            it.applySkin(view, SkinManager.resources, attrsMap)
         }
     }
 }

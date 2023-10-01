@@ -12,7 +12,7 @@ import androidx.annotation.RequiresApi
 /**
  * 默认Resources
  */
-class DefaultResources(private val context: Context) : IResources {
+class DefaultResources(private val context: Context) : PResources() {
     private val mAsset = context.assets
     private val mResources = context.resources
     private val mPkg: PackageInfo

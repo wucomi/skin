@@ -15,7 +15,7 @@ import androidx.annotation.RequiresApi
 /**
  * 外部Resources
  */
-class ExternalResources(context: Context, path: String) : IResources {
+class ExternalResources(context: Context, path: String) : PResources() {
     // 默认Resources
     private val mResources = context.resources
 
